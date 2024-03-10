@@ -1,0 +1,65 @@
+<form [formGroup]="registerForm" class="flex w-96 flex-col">
+  <div class="mt-3 flex flex-col">
+    <label for="email">Email</label>
+    <input
+      type="text"
+      formControlName="email"
+      id="email"
+      class="form-input rounded"
+    />
+  </div>
+  <div class="mt-3 flex flex-col">
+    <label for="username">Username</label>
+    <input
+      type="text"
+      formControlName="username"
+      id="username"
+      class="form-input rounded"
+      maxlength="101"
+    />
+  </div>
+  <div class="mt-3 flex flex-col">
+    <div *ngIf="showErrors(passwordControl)">
+      <div *ngIf="passwordControl?.errors?.['required']" class="text-red-500">
+        Password is required.
+      </div>
+      <div *ngIf="passwordControl?.errors?.['minlength']" class="text-red-500">
+        Password must be at least 8 characters.
+      </div>
+      <div *ngIf="passwordControl?.errors?.['maxlength']" class="text-red-500">
+        Password must be at most 100 characters.
+      </div>
+    </div>
+    <label for="password">Password</label>
+    <input
+      type="password"
+      formControlName="password"
+      id="password"
+      class="form-input rounded"
+      maxlength="101"
+    />
+  </div>
+  <div class="mt-3 flex flex-col">
+    <label for="passwordConfirm" class="text-bold">Confirm Password</label>
+    <input
+      type="password"
+      formControlName="passwordConfirm"
+      id="passwordConfirm"
+      class="form-input rounded"
+      maxlength="101"
+    />
+  </div>
+  <div class="mt-3 self-center">
+    <button
+      [disabled]="loading"
+      class="rounded bg-blue-500 px-3 py-2 text-white"
+    >
+      Register
+    </button>
+    <img
+      *ngIf="loading"
+      src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZADs="
+    />
+    <a [routerLink]="['/login']" class="ml-2 text-blue-600 underline">Cancel</a>
+  </div>
+</form>
