@@ -1,0 +1,8 @@
+[[d1_databases]]
+binding = "DB"
+database_name = "preview-d1-lft"
+database_id = "4eef7542-4fa0-4236-a529-c66442671814"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "ab4bc7f333244c6bab362f75e9f5419a"
