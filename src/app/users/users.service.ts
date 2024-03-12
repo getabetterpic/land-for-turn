@@ -20,4 +20,8 @@ export class UsersService {
   ): Observable<any> {
     return this.http.post('/api/register', userRegistration);
   }
+
+  public login(email: string, password: string): Observable<any> {
+    return this.http.post('/api/login', { email, password });
+  }
 }

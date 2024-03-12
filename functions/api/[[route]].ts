@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { getCookie, setCookie } from 'hono/cookie';
 import { handle } from 'hono/cloudflare-pages';
 import { Bindings } from '../utils/bindings';
 import * as bcrypt from 'bcryptjs';
@@ -29,7 +30,7 @@ app.post('/api/register', async (c) => {
     return c.json({ error: 'Email must be at most 255 characters' }, 400);
   }
 
-  const user = await c.env.KV.get('user:' + username);
+  const user = await c.env.KV.get('user:' + email.toLowerCase());
   if (user) {
     return c.json({ error: 'Username already taken' }, 400);
   }
@@ -45,10 +46,52 @@ app.post('/api/register', async (c) => {
       `user:${email.toLowerCase()}`,
       JSON.stringify({ hash, username }),
     );
+    await c.env.KV.put(`email:${email.toLowerCase()}`, username);
     return c.json({ success: true });
   } catch (error) {
     return c.json({ error: 'An error occurred' }, 500);
   }
+});
+
+app.post('/api/login', async (c) => {
+  // Find the user and ensure there's a hash
+  const { email, password } = await c.req.json();
+  const user = await c.env.KV.get<{ hash: string; username: string }>(
+    `user:${email.toLowerCase()}`,
+    'json',
+  );
+  if (!user || !user.hash) {
+    return c.json({ error: 'Invalid email or password' }, 400);
+  }
+
+  const { hash, username } = user;
+  const valid = await bcrypt.compare(password, hash);
+  if (!valid) {
+    return c.json({ error: 'Invalid email or password' }, 400);
+  }
+
+  const token = Math.random().toString(36).slice(2);
+  await c.env.KV.put(`token:${token}`, JSON.stringify({ email, username }));
+  setCookie(c, 'token', token, { httpOnly: true, path: '/', sameSite: 'Lax' });
+
+  return c.json({ success: true, username });
+});
+
+app.get('/api/me', async (c) => {
+  const token = getCookie(c, 'token');
+  if (!token) {
+    return c.json({ username: null }, 200);
+  }
+
+  const user = await c.env.KV.get<{ email: string; username: string }>(
+    `token:${token}`,
+    'json',
+  );
+  if (!user) {
+    return c.json({ username: null }, 200);
+  }
+
+  return c.json({ username: user.username });
 });
 
 export const onRequest = handle(app);

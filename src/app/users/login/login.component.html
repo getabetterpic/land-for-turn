@@ -1,0 +1,39 @@
+<form [formGroup]="loginForm" (ngSubmit)="submit()" class="flex w-96 flex-col">
+  <div class="mt-3 flex flex-col">
+    <label for="email">Email</label>
+    <input
+      type="text"
+      formControlName="email"
+      id="email"
+      class="form-input rounded"
+    />
+  </div>
+  <div class="mt-3 flex flex-col">
+    <div *ngIf="showErrors(passwordControl)">
+      <div *ngIf="passwordControl?.errors?.['required']" class="text-red-500">
+        Password is required.
+      </div>
+    </div>
+    <label for="password">Password</label>
+    <input
+      type="password"
+      formControlName="password"
+      id="password"
+      class="form-input rounded"
+      maxlength="101"
+    />
+  </div>
+  <div class="mt-3 self-center">
+    <button
+      type="submit"
+      [disabled]="loading"
+      class="rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-700"
+    >
+      Login
+    </button>
+  </div>
+</form>
+<h3 class="mt-2 text-lg">
+  New here?
+  <a [routerLink]="['/register']" class="text-blue-600 underline">Register.</a>
+</h3>
