@@ -18,10 +18,10 @@ export class UsersService {
   public register(
     userRegistration: Partial<UserRegistration>,
   ): Observable<any> {
-    return this.http.post('/api/register', userRegistration);
+    return this.http.post('/api/users/register', userRegistration);
   }
 
   public login(email: string, password: string): Observable<any> {
-    return this.http.post('/api/login', { email, password });
+    return this.http.post('/api/users/login', { email, password });
   }
 }

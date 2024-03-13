@@ -2,6 +2,7 @@
 binding = "DB"
 database_name = "preview-d1-lft"
 database_id = "4eef7542-4fa0-4236-a529-c66442671814"
+migrations_dir = "functions/db/migrations"
 
 [[kv_namespaces]]
 binding = "KV"
