@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { users } from '../db/schema';
 import { eq, or } from 'drizzle-orm';
 import { getCookie, setCookie } from 'hono/cookie';
+import { sendConfirmationEmail } from '../utils/send-confirmation-email';
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
@@ -57,10 +58,12 @@ app.post('/register', async (c) => {
       })
       .returning({
         email: users.email,
+        username: users.username,
         confirmation_token: users.confirmation_token,
       })
       .all();
-    // await sendConfirmationEmail(user.email, user.confirmation_token);
+    const host = c.req.header('Host') || 'land-for-turn.pages.dev';
+    await sendConfirmationEmail(user, host);
     return c.json({
       success: true,
       confirmation_token: user.confirmation_token,
