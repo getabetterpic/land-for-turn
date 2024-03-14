@@ -1,7 +1,8 @@
 [[d1_databases]]
 binding = "DB"
-database_name = "preview-d1-lft"
-database_id = "4eef7542-4fa0-4236-a529-c66442671814"
+database_name = "prod-d1-lft"
+database_id = "70c32a20-550e-493d-a0f5-6ce7cf270857"
+preview_database_id = "4eef7542-4fa0-4236-a529-c66442671814"
 migrations_dir = "functions/db/migrations"
 
 [[kv_namespaces]]
