@@ -47,13 +47,24 @@ app.post('/register', async (c) => {
 
   try {
     const hash = await bcrypt.hash(password, 10);
-    await db.insert(users).values({
-      email: cleanEmail,
-      username,
-      password_hash: hash,
-      confirmation_token: Math.random().toString(36).substring(2),
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: cleanEmail,
+        username,
+        password_hash: hash,
+        confirmation_token: Math.random().toString(36).substring(2),
+      })
+      .returning({
+        email: users.email,
+        confirmation_token: users.confirmation_token,
+      })
+      .all();
+    // await sendConfirmationEmail(user.email, user.confirmation_token);
+    return c.json({
+      success: true,
+      confirmation_token: user.confirmation_token,
     });
-    return c.json({ success: true });
   } catch (error) {
     return c.json({ error: 'An error occurred' }, 500);
   }
@@ -73,10 +84,13 @@ app.post('/login', async (c) => {
     return c.json({ error: 'Invalid email or password' }, 400);
   }
 
-  const { password_hash, username } = user;
+  const { password_hash, username, confirmed_at } = user;
   const valid = await bcrypt.compare(password, password_hash);
   if (!valid) {
     return c.json({ error: 'Invalid email or password' }, 400);
+  }
+  if (!confirmed_at) {
+    return c.json({ error: 'Please confirm your email' }, 400);
   }
 
   const token = Math.random().toString(36).slice(2);
@@ -112,6 +126,29 @@ app.get('/me', async (c) => {
     return c.json({ email: user?.email });
   } catch (error) {
     return c.json({ email: null });
+  }
+});
+
+app.get('/confirm', async (c) => {
+  const { confirmation_token } = c.req.query();
+  const db = drizzle(c.env.DB);
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.confirmation_token, confirmation_token))
+    .all();
+  if (!user) {
+    return c.redirect('/register');
+  }
+  try {
+    await db
+      .update(users)
+      .set({ confirmed_at: new Date().toISOString() })
+      .where(eq(users.confirmation_token, confirmation_token))
+      .run();
+    return c.redirect('/login');
+  } catch (error) {
+    return c.redirect('/register');
   }
 });
 

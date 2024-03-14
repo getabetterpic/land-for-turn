@@ -45,9 +45,9 @@ export class LoginComponent {
         this.loading = false;
         alert('Logged in');
       },
-      error: () => {
+      error: ({ error }) => {
         this.loading = false;
-        alert('Something went wrong. Please try again.');
+        alert(error.error || 'An error occurred');
       },
     });
   }
