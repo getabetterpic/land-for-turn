@@ -63,7 +63,8 @@ app.post('/register', async (c) => {
       })
       .all();
     const host = c.req.header('Host') || 'land-for-turn.pages.dev';
-    await sendConfirmationEmail(user, host);
+    console.log('host', host);
+    // await sendConfirmationEmail(user, host);
     return c.json({
       success: true,
       confirmation_token: user.confirmation_token,
