@@ -13,7 +13,7 @@ export async function sendConfirmationEmail(
   return fetch(`https://api.mailgun.net/v3/mail.landforturn.com/messages`, {
     method: 'POST',
     headers: {
-      Authorization: `Basic ${Buffer.from(`api:${apiKey}`).toString('base64')}`,
+      Authorization: `Basic ${btoa(unescape(encodeURIComponent(`api:${apiKey}`)))}`,
     },
     body: form,
   });
