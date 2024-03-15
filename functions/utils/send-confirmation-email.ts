@@ -7,7 +7,7 @@ export async function sendConfirmationEmail(
   form.append('to', user.email);
   form.append('subject', 'Confirm your email');
   form.append(
-    'text',
+    'html',
     `Click here to confirm your email: https://landforturn.com/api/users/confirm?confirmation_token=${user.confirmation_token}`,
   );
   return fetch(`https://api.mailgun.net/v3/mail.landforturn.com/messages`, {

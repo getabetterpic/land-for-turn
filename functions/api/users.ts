@@ -62,13 +62,15 @@ app.post('/register', async (c) => {
         confirmation_token: users.confirmation_token,
       })
       .all();
-    const { MAILGUN_API_KEY } = c.env;
-    await sendConfirmationEmail(user, MAILGUN_API_KEY);
+    const mailgunApiKey = c.env.MAILGUN_API_KEY;
+    await sendConfirmationEmail(user, mailgunApiKey);
     return c.json({
       success: true,
       confirmation_token: user.confirmation_token,
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.log('Error:', error);
+    console.log('Error:', error.message);
     return c.json({ error }, 500);
   }
 });
