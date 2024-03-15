@@ -62,9 +62,8 @@ app.post('/register', async (c) => {
         confirmation_token: users.confirmation_token,
       })
       .all();
-    const host = c.req.header('Host') || 'land-for-turn.pages.dev';
-    console.log('host', host);
-    // await sendConfirmationEmail(user, host);
+    const { MAILGUN_API_KEY } = c.env;
+    await sendConfirmationEmail(user, MAILGUN_API_KEY);
     return c.json({
       success: true,
       confirmation_token: user.confirmation_token,
