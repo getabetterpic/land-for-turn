@@ -69,7 +69,7 @@ app.post('/register', async (c) => {
       confirmation_token: user.confirmation_token,
     });
   } catch (error) {
-    return c.json({ error: 'An error occurred' }, 500);
+    return c.json({ error }, 500);
   }
 });
 
